@@ -1,0 +1,38 @@
+---
+
+- name: Create Delivery directory
+  become: true
+  ansible.builtin.file:
+    state: directory
+    path: "{{ artifacts_delivery_dir }}"
+    mode: "0755"
+
+- name: Download Parcel
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ cdp_parcels_file }}"
+    dest: "{{ artifacts_download_dir }}/{{ cdp_parcels_file | urlsplit('path') | basename }}"
+    mode: "0644"
+    url_username: "{{ repo_download_username | d(omit) }}"
+    url_password: "{{ repo_download_password | d(omit) }}"
+
+- name: Extract Parcel
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ artifacts_download_dir }}/{{ cdp_parcels_file | urlsplit('path') | basename }}"
+    dest: "{{ artifacts_delivery_dir }}"
+    remote_src: yes
+    extra_opts:
+      - --strip-components=1
+
+- name: Add don't delete flag
+  become: true
+  ansible.builtin.file:
+    path: "{{ artifacts_delivery_dir }}/.dont_delete"
+    state: touch
+
+- name: Cleanup Parcel
+  become: true
+  ansible.builtin.file:
+    path: "{{ artifacts_delivery_dir }}/{{ cdp_parcels_file | urlsplit('path') | basename }}"
+    state: absent

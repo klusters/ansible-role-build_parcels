@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: Anis FATHAHLLAH
+  role_name: build_parcels
+  description: Role to create parcels snapshots for Cloudera deployements
+  license: Apache-2.0
+  company: none
+  min_ansible_version: "2.12"
+
+  platforms:
+    - name: EL
+      versions:
+        - "7"
+        - "8"
+    - name: Ubuntu
+      versions:
+        - focal
+
+dependencies: []
